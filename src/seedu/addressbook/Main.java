@@ -2,7 +2,6 @@ package seedu.addressbook;
 
 import seedu.addressbook.data.person.ReadOnlyPerson;
 import seedu.addressbook.storage.StorageFile.*;
-import seedu.addressbook.storage.StorageFileDeletedException;
 
 import seedu.addressbook.commands.*;
 import seedu.addressbook.data.AddressBook;
