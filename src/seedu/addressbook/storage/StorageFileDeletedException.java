@@ -6,7 +6,7 @@ package seedu.addressbook.storage;
 public class StorageFileDeletedException extends Exception {
 
     /**
-     * @param message should inform user about the deleted storage file and to create one
+     * @param message should inform user about the deleted storage file
      */
     public StorageFileDeletedException(String message) {
         super(message);
