@@ -2,11 +2,13 @@ package seedu.addressbook;
 
 import seedu.addressbook.data.person.ReadOnlyPerson;
 import seedu.addressbook.storage.StorageFile.*;
+import seedu.addressbook.storage.StorageFileDeletedException;
 
 import seedu.addressbook.commands.*;
 import seedu.addressbook.data.AddressBook;
 import seedu.addressbook.parser.Parser;
 import seedu.addressbook.storage.StorageFile;
+import seedu.addressbook.storage.StorageFileDeletedException;
 import seedu.addressbook.ui.TextUi;
 
 import java.util.Collections;
@@ -22,6 +24,7 @@ public class Main {
 
     /** Version info of the program. */
     public static final String VERSION = "AddessBook Level 2 - Version 1.0";
+    public static final String MESSAGE_STORAGE_FILE_DELETED = "The storage file has been deleted.";
 
     private TextUi ui;
     private StorageFile storage;
@@ -31,12 +34,12 @@ public class Main {
     private List<? extends ReadOnlyPerson> lastShownList = Collections.emptyList();
 
 
-    public static void main(String... launchArgs) {
+    public static void main(String... launchArgs) throws StorageFileDeletedException {
         new Main().run(launchArgs);
     }
 
     /** Runs the program until termination.  */
-    public void run(String[] launchArgs) {
+    public void run(String[] launchArgs) throws StorageFileDeletedException {
         start(launchArgs);
         runCommandLoopUntilExitCommand();
         exit();
@@ -55,7 +58,7 @@ public class Main {
             this.addressBook = storage.load();
             ui.showWelcomeMessage(VERSION, storage.getPath());
 
-        } catch (InvalidStorageFilePathException | StorageOperationException e) {
+        } catch (InvalidStorageFilePathException | StorageOperationException | StorageFileDeletedException e) {
             ui.showInitFailedMessage();
             /*
              * ==============NOTE TO STUDENTS=========================================================================
@@ -76,8 +79,10 @@ public class Main {
         System.exit(0);
     }
 
-    /** Reads the user command and executes it, until the user issues the exit command.  */
-    private void runCommandLoopUntilExitCommand() {
+    /** Reads the user command and executes it, until the user issues the exit command.  
+     * @throws StorageFileDeletedException
+     */
+    private void runCommandLoopUntilExitCommand() throws StorageFileDeletedException {
         Command command;
         do {
             String userCommandText = ui.getUserCommand();
@@ -103,16 +108,19 @@ public class Main {
      * @param command user command
      * @return result of the command
      */
-    private CommandResult executeCommand(Command command)  {
+    private CommandResult executeCommand(Command command) throws StorageFileDeletedException {
         try {
             command.setData(addressBook, lastShownList);
             CommandResult result = command.execute();
-            storage.save(addressBook);
+            storage.save(addressBook, true);
             return result;
+        } catch (StorageFileDeletedException e){
+            ui.showToUser(e.getMessage());
         } catch (Exception e) {
             ui.showToUser(e.getMessage());
             throw new RuntimeException(e);
         }
+        return null;
     }
 
     /**
