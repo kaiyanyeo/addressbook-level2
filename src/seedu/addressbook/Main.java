@@ -78,9 +78,7 @@ public class Main {
         System.exit(0);
     }
 
-    /** Reads the user command and executes it, until the user issues the exit command.  
-     * @throws StorageFileDeletedException
-     */
+    /** Reads the user command and executes it, until the user issues the exit command.  */
     private void runCommandLoopUntilExitCommand() throws StorageFileDeletedException {
         Command command;
         do {
